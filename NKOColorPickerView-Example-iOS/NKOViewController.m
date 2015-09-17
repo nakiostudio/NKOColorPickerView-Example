@@ -18,30 +18,36 @@
 
 @implementation NKOViewController
 
-- (void)viewDidLoad
-{
+- (void)viewDidLoad {
+    
     [super viewDidLoad];
     
-    __weak NKOViewController *weakSelf = self;
+    self.button.layer.cornerRadius = 6;
     
-    [self.pickerView setDidChangeColorBlock:^(UIColor *color){
-        [weakSelf _customizeButton];
-    }];
-    
-    [self.pickerView setTintColor:[UIColor darkGrayColor]];
-    
-    [self _customizeButton];
+    [self _setupColorPicker];
+    [self _customizeButtonWithColor:self.pickerView.color];
 }
 
 #pragma mark - Private methods
-- (void)_customizeButton
+
+- (void)_setupColorPicker
 {
-    self.button.layer.cornerRadius = 6;
+    __weak typeof(self) weakSelf = self;
+    id changeColorBlock = ^(UIColor *color){
+        typeof(self) strongSelf = weakSelf;
+        [strongSelf _customizeButtonWithColor:color];
+    };
+    
+    [self.pickerView setDidChangeColorBlock:changeColorBlock];
+    [self.pickerView setColor:[UIColor colorWithRed:0.329f green:0.718f blue:1.f alpha:1.f]];
+    [self.pickerView setTintColor:[UIColor darkGrayColor]];
+}
+
+- (void)_customizeButtonWithColor:(UIColor*)color {
     self.button.backgroundColor = self.pickerView.color;
 }
 
-- (IBAction)_onButtonClick:(id)sender
-{
+- (IBAction)_onButtonClick:(id)sender {
     [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"https://twitter.com/carlostify"]];
 }
 
